@@ -12,23 +12,29 @@ export class StudentsService {
     private readonly studentsRepository: Repository<Student>,
   ) {}
 
-  create(createStudentDto: CreateStudentDto) {
-    return 'This action adds a new student';
+  async create(createStudentDto: CreateStudentDto) {
+    const student = await this.studentsRepository.create(createStudentDto);
+    await this.studentsRepository.save(student);
+    return student;
   }
 
   findAll() {
-    return this.studentsRepository.find();
+    try {
+      return this.studentsRepository.find();
+    } catch (error) {
+      throw new Error('error when getting students');
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} student`;
+  findOne(id: string) {
+    return this.studentsRepository.findOneBy({ id });
   }
 
-  update(id: number, updateStudentDto: UpdateStudentDto) {
+  update(id: string, updateStudentDto: UpdateStudentDto) {
     return `This action updates a #${id} student`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} student`;
   }
 }
