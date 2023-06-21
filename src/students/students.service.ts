@@ -19,22 +19,25 @@ export class StudentsService {
   }
 
   findAll() {
-    try {
-      return this.studentsRepository.find();
-    } catch (error) {
-      throw new Error('error when getting students');
-    }
+    return this.studentsRepository.find();
   }
 
   findOne(id: string) {
     return this.studentsRepository.findOneBy({ id });
   }
 
-  update(id: string, updateStudentDto: UpdateStudentDto) {
-    return `This action updates a #${id} student`;
+  async update(id: string, updateStudentDto: UpdateStudentDto) {
+    const findStudent = await this.findOne(id);
+    const UpdateStudent = await this.studentsRepository.merge(
+      findStudent,
+      updateStudentDto,
+    );
+    return this.studentsRepository.save(UpdateStudent);
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} student`;
+  async remove(id: string) {
+    const students = await this.studentsRepository.findOneBy({ id });
+    await this.studentsRepository.remove(students);
+    return `students ${students.id} is removed`;
   }
 }
